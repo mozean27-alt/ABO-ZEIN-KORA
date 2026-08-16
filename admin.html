@@ -2,73 +2,43 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم | كورة ابوزين</title>
-    <style>
-        body { font-family: sans-serif; background: #0a0e17; color: white; padding: 30px; display: flex; justify-content: center; }
-        .admin-card { background: #151c28; padding: 25px; border-radius: 12px; width: 100%; max-width: 500px; border: 1px solid #10b981; }
-        input, select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 6px; border: 1px solid #1e293b; background: #0a0e17; color: white; font-size: 1rem; box-sizing: border-box; }
-        button { background: #10b981; font-weight: bold; cursor: pointer; border: none; }
-        button:hover { background: #059669; }
-    </style>
+    <title>لوحة التحكم</title>
 </head>
 <body>
-    <div class="admin-card">
+    <div style="background:#151c28; padding:20px; border-radius:10px; color:white; text-align:center;">
         <h2>لوحة نشر الأخبار</h2>
-        <input type="text" id="title" placeholder="عنوان الخبر...">
-        <input type="text" id="img" placeholder="رابط الصورة (اختياري)...">
-        <select id="category">
-            <option value="local">الكرة المحلية</option>
-            <option value="saudi">الدوري السعودي</option>
-            <option value="global">الكرة العالمية</option>
-        </select>
-        <button onclick="publishNews()">نشر الخبر فوراً</button>
+        <input type="text" id="title" placeholder="عنوان الخبر" style="width:90%; padding:10px; margin:10px;">
+        <br>
+        <button id="btn" style="background:green; color:white; padding:15px; border:none; cursor:pointer;">نشر الخبر الآن</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // تأكد من وضع بيانات مشروعك الحقيقية من Firebase Console هنا
+        // ضع بياناتك هنا بدقة
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
             projectId: "YOUR_PROJECT_ID",
             storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
+            messagingSenderId: "YOUR_ID",
+            appId: "YOUR_APP_ID"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        window.publishNews = async function() {
-            const title = document.getElementById('title').value.trim();
-            const img = document.getElementById('img').value.trim() || 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&fit=crop';
-            const category = document.getElementById('category').value;
-            const catNames = { local: 'الكرة المحلية', global: 'الكرة العالمية', saudi: 'الدوري السعودي' };
-
-            if (!title) {
-                alert('يرجى كتابة عنوان الخبر أولاً!');
-                return;
-            }
-
+        document.getElementById('btn').addEventListener('click', async () => {
+            alert('بدأت عملية النشر...');
+            const title = document.getElementById('title').value;
             try {
-                await addDoc(collection(db, "news"), {
-                    title: title,
-                    img: img,
-                    category: category,
-                    categoryName: catNames[category],
-                    timestamp: new Date()
-                });
-
-                document.getElementById('title').value = '';
-                document.getElementById('img').value = '';
-                alert('تم نشر الخبر بنجاح! اذهب للموقع وستجده متواجد بالقسم المحدد.');
-            } catch (error) {
-                console.error("Firebase Error: ", error);
-                alert('فشل النشر! تأكد من ضبط مفاتيح Firebase وضبط صلاحيات Rules إلى true.');
+                await addDoc(collection(db, "news"), { title: title });
+                alert('تم النشر بنجاح!');
+            } catch (e) {
+                alert('خطأ: ' + e.message);
             }
-        };
+        });
     </script>
 </body>
 </html>
