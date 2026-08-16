@@ -8,13 +8,14 @@
         .admin-card { background: #151c28; padding: 25px; border-radius: 12px; width: 100%; max-width: 500px; border: 1px solid #10b981; }
         input, select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 6px; border: 1px solid #1e293b; background: #0a0e17; color: white; font-size: 1rem; box-sizing: border-box; }
         button { background: #10b981; font-weight: bold; cursor: pointer; border: none; }
+        button:hover { background: #059669; }
     </style>
 </head>
 <body>
     <div class="admin-card">
         <h2>لوحة نشر الأخبار</h2>
         <input type="text" id="title" placeholder="عنوان الخبر...">
-        <input type="text" id="img" placeholder="رابط الصورة...">
+        <input type="text" id="img" placeholder="رابط الصورة (اختياري)...">
         <select id="category">
             <option value="local">الكرة المحلية</option>
             <option value="saudi">الدوري السعودي</option>
@@ -27,36 +28,44 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ⚠️ ضع مفاتيحك هنا مرة أخرى بدقة
+        // بيانات مشروعك الحقيقية
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
+            apiKey: "AIzaSyA7hsAeX_BLGnGblG--rWJzJUaaMcrT9kGc",
+            authDomain: "abo-zein-kora.firebaseapp.com",
+            projectId: "abo-zein-kora",
+            storageBucket: "abo-zein-kora.firebasestorage.app",
+            messagingSenderId: "528930689485",
+            appId: "1:528930689485:web:426749d38cf2e7f8453484"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         document.getElementById('publishBtn').addEventListener('click', async () => {
-            const title = document.getElementById('title').value;
-            const img = document.getElementById('img').value;
+            const title = document.getElementById('title').value.trim();
+            const img = document.getElementById('img').value.trim() || 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&fit=crop';
             const category = document.getElementById('category').value;
+            const catNames = { local: 'الكرة المحلية', global: 'الكرة العالمية', saudi: 'الدوري السعودي' };
 
-            if(!title) { alert('اكتب العنوان!'); return; }
+            if(!title) { 
+                alert('اكتب عنوان الخبر أولاً!'); 
+                return; 
+            }
 
             try {
                 await addDoc(collection(db, "news"), {
                     title: title,
                     img: img,
                     category: category,
+                    categoryName: catNames[category],
                     date: new Date()
                 });
-                alert('تم نشر الخبر مع الصورة والقسم بنجاح!');
+                
+                document.getElementById('title').value = '';
+                document.getElementById('img').value = '';
+                alert('تم نشر الخبر بنجاح وسيظهر في الموقع فوراً!');
             } catch (e) {
-                alert('خطأ: ' + e.message);
+                alert('خطأ أثناء النشر: ' + e.message);
             }
         });
     </script>
