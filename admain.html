@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة التحكم | كورة ابوزين</title>
+    <style>
+        body { font-family: sans-serif; background: #0a0e17; color: white; padding: 30px; display: flex; justify-content: center; }
+        .admin-card { background: #151c28; padding: 25px; border-radius: 12px; width: 100%; max-width: 500px; border: 1px solid #10b981; }
+        input, select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 6px; border: 1px solid #1e293b; background: #0a0e17; color: white; font-size: 1rem; box-sizing: border-box; }
+        button { background: #10b981; font-weight: bold; cursor: pointer; border: none; }
+    </style>
+</head>
+<body>
+    <div class="admin-card">
+        <h2>لوحة نشر الأخبار</h2>
+        <input type="text" id="title" placeholder="عنوان الخبر...">
+        <input type="text" id="img" placeholder="رابط الصورة (اختياري)...">
+        <select id="category">
+            <option value="local">الكرة المحلية</option>
+            <option value="global">الكرة العالمية</option>
+            <option value="saudi">الدوري السعودي</option>
+        </select>
+        <button onclick="publishNews()">نشر الخبر فوراً</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // نفس بيانات Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.publishNews = async function() {
+            const title = document.getElementById('title').value.trim();
+            const img = document.getElementById('img').value.trim() || 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&fit=crop';
+            const category = document.getElementById('category').value;
+            const catNames = { local: 'الكرة المحلية', global: 'الكرة العالمية', saudi: 'الدوري السعودي' };
+
+            if(!title) return alert('أدخل العنوان!');
+
+            try {
+                await addDoc(collection(db, "news"), {
+                    title, img, category, categoryName: catNames[category], timestamp: new Date()
+                });
+
+                document.getElementById('title').value = '';
+                document.getElementById('img').value = '';
+                alert('تم نشر الخبر بنجاح!');
+            } catch (error) {
+                alert('حدث خطأ في النشر! تأكد من تغيير Rules في Firebase إلى true كما موضح في الخطوات.');
+                console.error(error);
+            }
+        };
+    </script>
+</body>
+</html>
