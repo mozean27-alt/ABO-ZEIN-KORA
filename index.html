@@ -86,23 +86,19 @@
     </nav>
 
     <div class="content-layout">
-        
         <main>
             <div id="liveStreamSection"></div>
-
             <div class="section-title"><i class="fa-solid fa-newspaper"></i> أحدث الأخبار</div>
             <div class="news-grid" id="newsGrid">
                 <div class="status-msg">جاري تحميل الأخبار...</div>
             </div>
         </main>
-
         <aside>
             <div class="sidebar-table-box">
                 <div class="section-title" id="tableTitle" style="margin-bottom: 0;"><i class="fa-solid fa-list-ol"></i> ترتيب الفرق</div>
                 <div class="table-scroll-container" id="tableScrollContainer"></div>
             </div>
         </aside>
-
     </div>
 
     <script type="module">
@@ -143,7 +139,6 @@
                         <div class="stream-card"><h4>مباراة بيراميدز</h4><a href="#" class="live-btn" onclick="alert('جاري تشغيل بث بيراميدز')"><i class="fa-solid fa-play"></i> مشاهدة البث</a></div>
                     </div>
                 `;
-
                 let rows = egyptianTeams.map((team, idx) => `<tr><td><b>${idx + 1}</b></td><td class="team-name">${team}</td><td>0</td><td><b>0</b></td></tr>`).join('');
                 tableSec.innerHTML = `<table class="league-table"><thead><tr><th>#</th><th style="text-align: right;">الفريق</th><th>لعب</th><th>نقاط</th></tr></thead><tbody>${rows}</tbody></table>`;
 
@@ -158,14 +153,12 @@
                         <div class="stream-card"><h4>مباراة الأهلي</h4><a href="#" class="live-btn" onclick="alert('جاري تشغيل بث الأهلي السعودي')"><i class="fa-solid fa-play"></i> مشاهدة البث</a></div>
                     </div>
                 `;
-
                 let rows = saudiTeams.map((team, idx) => `<tr><td><b>${idx + 1}</b></td><td class="team-name">${team}</td><td>0</td><td><b>0</b></td></tr>`).join('');
                 tableSec.innerHTML = `<table class="league-table"><thead><tr><th>#</th><th style="text-align: right;">الفريق</th><th>لعب</th><th>نقاط</th></tr></thead><tbody>${rows}</tbody></table>`;
 
             } else if (currentCategory === 'global') {
                 tableTitle.innerHTML = `<i class="fa-solid fa-list-ol"></i> ترتيب الدوري الإسباني`;
                 streamSec.innerHTML = '';
-
                 let rows = spanishTeams.map((team, idx) => `<tr><td><b>${idx + 1}</b></td><td class="team-name">${team}</td><td>0</td><td><b>0</b></td></tr>`).join('');
                 tableSec.innerHTML = `<table class="league-table"><thead><tr><th>#</th><th style="text-align: right;">الفريق</th><th>لعب</th><th>نقاط</th></tr></thead><tbody>${rows}</tbody></table>`;
             }
@@ -180,7 +173,6 @@
         window.renderNews = function() {
             const grid = document.getElementById('newsGrid');
             grid.innerHTML = '';
-
             const filtered = allNews.filter(item => item.category === currentCategory);
 
             if (filtered.length === 0) {
