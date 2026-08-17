@@ -2,33 +2,58 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم | كورة ابوزين</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | KORA ABO ZAIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #0a0e17; color: white; padding: 30px; display: flex; justify-content: center; }
-        .admin-card { background: #151c28; padding: 25px; border-radius: 12px; width: 100%; max-width: 500px; border: 1px solid #10b981; }
-        input, select, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 6px; border: 1px solid #1e293b; background: #0a0e17; color: white; font-size: 1rem; box-sizing: border-box; }
-        button { background: #10b981; font-weight: bold; cursor: pointer; border: none; }
+        :root {
+            --bg-main: #0a0e17;
+            --bg-card: #151c28;
+            --accent-green: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #1e293b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        
+        .admin-card { background: var(--bg-card); padding: 30px; border-radius: 16px; width: 100%; max-width: 500px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h2 { margin-bottom: 20px; font-size: 1.4rem; display: flex; align-items: center; gap: 10px; border-right: 4px solid var(--accent-green); padding-right: 10px; }
+        
+        label { display: block; margin-top: 15px; margin-bottom: 5px; font-size: 0.9rem; color: var(--text-muted); }
+        input, select, button { width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-main); font-size: 1rem; outline: none; transition: 0.3s; }
+        input:focus, select:focus { border-color: var(--accent-green); }
+        
+        button { background: var(--accent-green); color: white; font-weight: bold; cursor: pointer; margin-top: 25px; border: none; display: flex; justify-content: center; align-items: center; gap: 8px; }
         button:hover { background: #059669; }
     </style>
 </head>
 <body>
+
     <div class="admin-card">
-        <h2>لوحة نشر الأخبار</h2>
-        <input type="text" id="title" placeholder="عنوان الخبر...">
-        <input type="text" id="img" placeholder="رابط الصورة (اختياري)...">
+        <h2><i class="fa-solid fa-pen-to-square" style="color: var(--accent-green);"></i> لوحة نشر الأخبار</h2>
+        
+        <label for="title">عنوان الخبر</label>
+        <input type="text" id="title" placeholder="اكتب عنوان الخبر هنا...">
+        
+        <label for="img">رابط الصورة (اختياري)</label>
+        <input type="text" id="img" placeholder="ضع رابط الصورة المباشر...">
+        
+        <label for="category">القسم</label>
         <select id="category">
             <option value="local">الكرة المحلية</option>
             <option value="saudi">الدوري السعودي</option>
             <option value="global">الكرة العالمية</option>
         </select>
-        <button id="publishBtn">نشر الخبر الآن</button>
+        
+        <button id="publishBtn"><i class="fa-solid fa-paper-plane"></i> نشر الخبر فوراً</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // بيانات مشروعك الحقيقية
         const firebaseConfig = {
             apiKey: "AIzaSyA7hsAeX_BLGnGblG--rWJzJUaaMcrT9kGc",
             authDomain: "abo-zein-kora.firebaseapp.com",
@@ -41,15 +66,20 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        const catNames = { 
+            local: 'الكرة المحلية', 
+            saudi: 'الدوري السعودي', 
+            global: 'الكرة العالمية' 
+        };
+
         document.getElementById('publishBtn').addEventListener('click', async () => {
             const title = document.getElementById('title').value.trim();
             const img = document.getElementById('img').value.trim() || 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&fit=crop';
             const category = document.getElementById('category').value;
-            const catNames = { local: 'الكرة المحلية', global: 'الكرة العالمية', saudi: 'الدوري السعودي' };
 
-            if(!title) { 
-                alert('اكتب عنوان الخبر أولاً!'); 
-                return; 
+            if (!title) {
+                alert('يرجى كتابة عنوان الخبر أولاً!');
+                return;
             }
 
             try {
@@ -60,12 +90,13 @@
                     categoryName: catNames[category],
                     date: new Date()
                 });
-                
+
                 document.getElementById('title').value = '';
                 document.getElementById('img').value = '';
-                alert('تم نشر الخبر بنجاح وسيظهر في الموقع فوراً!');
-            } catch (e) {
-                alert('خطأ أثناء النشر: ' + e.message);
+                alert('تم نشر الخبر بنجاح وسيعرض في الموقع فوراً!');
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert('حدث خطأ أثناء النشر، تأكد من اتصال الإنترنت وقواعد Firebase.');
             }
         });
     </script>
