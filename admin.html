@@ -10,7 +10,6 @@
         button { background: #10b981; font-weight: bold; cursor: pointer; border: none; transition: 0.3s; }
         button:hover { opacity: 0.9; }
         h2 { font-size: 1.2rem; margin-bottom: 15px; color: #10b981; border-right: 4px solid #10b981; padding-right: 8px; }
-        .row { display: flex; gap: 10px; }
     </style>
 </head>
 <body>
@@ -28,24 +27,9 @@
         <button onclick="publishNews()">نشر الخبر فوراً</button>
     </div>
 
-    <!-- قسم تحديث جدول الدوري -->
-    <div class="admin-card">
-        <h2>تحديث ترتيب ونقاط الأندية</h2>
-        <select id="leagueType">
-            <option value="saudi">الدوري السعودي</option>
-            <option value="local">الدوري المصري</option>
-        </select>
-        <input type="text" id="teamName" placeholder="اسم الفريق (مثال: الهلال أو الأهلي)...">
-        <div class="row">
-            <input type="number" id="matchesPlayed" placeholder="عدد المباريات (لعب)">
-            <input type="number" id="teamPoints" placeholder="النقاط">
-        </div>
-        <button style="background: #3b82f6;" onclick="updateStandings()">حفظ وتحديث جدول الفريق</button>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // استبدل البيانات دي ببيانات مشروعك الحقيقية من فايربيس
         const firebaseConfig = {
@@ -79,36 +63,6 @@
             } catch (error) {
                 console.error("خطأ تفصيلي في نشر الخبر:", error);
                 alert('حدث خطأ في النشر: ' + error.message);
-            }
-        };
-
-        // تحديث جدول الترتيب والنقاط
-        window.updateStandings = async function() {
-            const league = document.getElementById('leagueType').value;
-            const team = document.getElementById('teamName').value.trim();
-            const played = document.getElementById('matchesPlayed').value;
-            const points = document.getElementById('teamPoints').value;
-
-            if(!team || played === '' || points === '') {
-                return alert('الرجاء إدخال اسم الفريق وعدد المباريات والنقاط!');
-            }
-
-            try {
-                await setDoc(doc(db, "standings", `${league}_${team}`), {
-                    league: league,
-                    team: team,
-                    played: Number(played),
-                    points: Number(points),
-                    updatedAt: new Date()
-                });
-
-                document.getElementById('teamName').value = '';
-                document.getElementById('matchesPlayed').value = '';
-                document.getElementById('teamPoints').value = '';
-                alert('تم تحديث بيانات الفريق في جدول الدوري بنجاح!');
-            } catch (error) {
-                console.error("خطأ تفصيلي في تحديث الجدول:", error);
-                alert('حدث خطأ أثناء التحديث: ' + error.message);
             }
         };
     </script>
